@@ -19,6 +19,18 @@ class Todos(db.Model):
 
 @app.route('/')
 def index():
-
+    # new_data_id = 3
+    # first_todo = Todos(pk=new_data_id, description="The fourth task")
+    # second_todo = Todos(pk=new_data_id+1, description="The fifth task")
+    # third_todo = Todos(pk=new_data_id+2, description="The sixth task")
+    #
+    # db.session.add_all([first_todo, second_todo, third_todo])
+    # db.session.commit()
     data = Todos.query.all()
     return render_template('index.html', data=data)
+
+
+if __name__ == '__main__':
+    # set the debug to true for the app to be restarted every time we make changes
+    app.debug = True
+    app.run(host='127.0.0.1', port=5000)
