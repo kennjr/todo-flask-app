@@ -7,6 +7,10 @@
     <title>Document</title>
 </head>
 <body>
+    <form action="/todos/create" method="post">
+        <input type="text" name="description" placeholder="Description">
+        <input type="submit" value="CREATE">
+    </form>
     <ul>
         {% for todo in data %}
             <li>{{ todo.description }}</li>
