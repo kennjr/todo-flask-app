@@ -13,17 +13,29 @@ document.getElementById('form').onsubmit = function (e) {
       }
    })
    .then(function(response) {
-         return response.json();
+        console.log(response);
+        return response.json();
    })
    .then(function(jsonresponse) {
+        console.log(jsonresponse);
         // once we get a positive response we add the new item to the list
         const liItem= document.createElement('LI');
-        liItem.innerHTML = jsonResponse['description'];
-        document.getElementById('todo_list').appendChild(liItem);
+        liItem.innerHTML = jsonresponse['description'];
+        document.getElementById('todos').appendChild(liItem);
         document.getElementById('error').classname='hidden';
    })
    .catch(function(error) {
          document.getElementById('error').classname='';
          document.getElementById('error').innerHTML = error.toString()
-   }
+   })
+}
+
+let checkboxes = document.querySelectorAll('.check-completed');
+
+for(let i = 0; i < checkboxes.length; i++){
+    console.log('checkbox', i);
+    let checkbox = checkboxes[i];
+    checkbox.onchange = function(event) {
+        console.log("event", event);
+    }
 }
