@@ -1,10 +1,11 @@
-from flask import Flask, render_template, request, url_for, jsonify
+import sys
+
+from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_cors import CORS
 
 # the __name__ creates a flask app that's named after the file it's in i.e main
-from werkzeug.utils import redirect
+# from werkzeug.utils import redirect
 
 app = Flask(__name__)
 # the line below configures the flask app to the specified db
@@ -52,16 +53,30 @@ def index():
 
 @app.route('/todos/create', methods=['POST'])
 def create_todo():
-    # we're getting the data from the request
-    description = request.get_json()['description']
-    # creating a new todo_item that'll be added to the db
-    todo = Todos(description=description)
-    db.session.add(todo)
-    db.session.commit()
-    # we're returning the todo_obj back to the user as a json_obj
-    return jsonify({
-        'description': todo.description
-    })
+    # the body var is what we'll use to send data back to the user
+    body = {}
+    error = False
+    try:
+        # we're getting the data from the request
+        description = request.get_json()['description']
+        # creating a new todo_item that'll be added to the db
+        todo = Todos(description=description)
+        db.session.add(todo)
+        db.session.commit()
+        body['description'] = todo.description
+    except:
+        error = True
+        db.session.rollback()
+        # the print statement below will give us more info on what caused the error
+        print(sys.exc_info())
+        # we're returning the todo_obj back to the user as a json_obj
+    finally:
+        # this should happen regardless
+        db.session.close()
+    if not error:
+        return jsonify(body)
+    else:
+        return jsonify({'error': "An error occurred"})
 
 
 if __name__ == '__main__':
