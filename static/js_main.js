@@ -45,6 +45,10 @@ for(let i = 0; i < checkboxes.length; i++){
             return response;
         }).then((jsonresponse) => {
             console.log('js response', jsonresponse)
+            document.getElementById('error').classname='hidden';
+        }).catch((error) => {
+            document.getElementById('error').classname='';
+            document.getElementById('error').innerHTML = error.toString()
         })
     }
 }
