@@ -4,17 +4,22 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script defer src="js_main.js"></script>
+    <link rel="stylesheet" href="styles.css">
     <title>Document</title>
 </head>
 <body>
-    <form action="/todos/create" method="post">
-        <input type="text" name="description" placeholder="Description">
+    <!--  we get rid of the action and method so that the form submission can be handled by js  -->
+    <form id="form">
+        <input type="text" id="description" name="description" placeholder="Description">
         <input type="submit" value="CREATE">
     </form>
-    <ul>
+    <p class="hidden" id="error">Something went wrong</p>
+    <ul id="todos">
         {% for todo in data %}
             <li>{{ todo.description }}</li>
         {% endfor %}
     </ul>
+
 </body>
 </html>
