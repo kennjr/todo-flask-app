@@ -33,9 +33,18 @@ document.getElementById('form').onsubmit = function (e) {
 let checkboxes = document.querySelectorAll('.check-completed');
 
 for(let i = 0; i < checkboxes.length; i++){
-    console.log('checkbox', i);
     let checkbox = checkboxes[i];
     checkbox.onchange = function(event) {
-        console.log("event", event);
+        let checked_status = event.target.checked;
+        // we're gonna update the value of the todo_item's completed col.
+        fetch('http://localhost:5000/todos/set-completed', {
+            method: 'POST',
+            body: JSON.stringify({ 'completed' :checked_status }),
+            headers: { 'Content-Type': 'application/json' }
+        }).then((response) => {
+            return response;
+        }).then((jsonresponse) => {
+            console.log('js response', jsonresponse)
+        })
     }
 }
