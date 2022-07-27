@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script defer src="js_main.js"></script>
-    <link rel="stylesheet" href="styles.css">
+    <script defer src="{{ url_for('static', filename='js_main.js') }}"></script>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <title>Document</title>
 </head>
 <body>
@@ -17,7 +18,7 @@
     <p class="hidden" id="error">Something went wrong</p>
     <ul id="todos">
         {% for todo in data %}
-            <li>{{ todo.description }}</li>
+            <li><input type="checkbox" class="check-completed" {% if todo.completed %} checked {% endif %}/>{{ todo.description }}</li>
         {% endfor %}
     </ul>
 
