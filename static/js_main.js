@@ -35,9 +35,11 @@ let checkboxes = document.querySelectorAll('.check-completed');
 for(let i = 0; i < checkboxes.length; i++){
     let checkbox = checkboxes[i];
     checkbox.onchange = function(event) {
+        console.log(event)
         let checked_status = event.target.checked;
+        let todo_id = event.target.dataset['id']
         // we're gonna update the value of the todo_item's completed col.
-        fetch('http://localhost:5000/todos/set-completed', {
+        fetch('http://localhost:5000/todos/' + todo_id + '/set-completed', {
             method: 'POST',
             body: JSON.stringify({ 'completed' :checked_status }),
             headers: { 'Content-Type': 'application/json' }
@@ -51,4 +53,23 @@ for(let i = 0; i < checkboxes.length; i++){
             document.getElementById('error').innerHTML = error.toString()
         })
     }
+}
+
+function delete_todo(pk){
+    fetch('todos/' + pk + '/delete', {
+        method: 'DELETE',
+        body: JSON.stringify({'id': pk}),
+        headers: { 'Content-Type': 'application/json' }
+    }).then((response) => {
+        return response;
+    }).catch((error) => {
+        console.log("An error occurred", error.toString())
+    })
+//    .then((jsonresponse) => {
+//        let status = jsonresponse['status'];
+//        if(status == true){
+//            console.log("The mission was a success")
+//        }
+//    })
+
 }
