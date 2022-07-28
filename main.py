@@ -1,11 +1,12 @@
 import sys
 
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
 # the __name__ creates a flask app that's named after the file it's in i.e main
 # from werkzeug.utils import redirect
+from werkzeug.utils import redirect
 
 app = Flask(__name__)
 # the line below configures the flask app to the specified db
@@ -20,6 +21,7 @@ class Todos(db.Model):
     __tablename__ = 'todos'
     pk = db.Column(db.Integer, primary_key=True, nullable=False)
     description = db.Column(db.String(), nullable=False)
+    completed = db.Column(db.Boolean, nullable=False, default=False)
 
 
 @app.route('/')
@@ -31,7 +33,7 @@ def index():
     #
     # db.session.add_all([first_todo, second_todo, third_todo])
     # db.session.commit()
-    data = Todos.query.all()
+    data = Todos.query.order_by('pk').all()
     # for item in data:
     #     db.session.delete(item)
     # db.session.commit()
@@ -51,6 +53,45 @@ def index():
 #     # return render_template("index.html")
 
 
+@app.route('/todos/<pk>/delete', methods=['DELETE'])
+def delete_todo_item(pk):
+    body = {}
+    try:
+        deleted_todo = Todos.query.get(pk)
+        db.session.delete(deleted_todo)
+        db.session.commit()
+        body = {'status': True}
+    except:
+        print(sys.exc_info())
+        db.session.rollback()
+        body = {'status': False}
+    finally:
+        db.session.close()
+    return jsonify(body)
+
+
+@app.route('/todos/<todo_id>/set-completed', methods=['POST'])
+def set_completed(todo_id):
+    todo = Todos.query.get(todo_id)
+    if todo:
+        # if we get an item with the id passed int the route then we can make an attempt to process it
+        try:
+            completed = request.get_json()['completed']
+            todo.completed = completed
+            db.session.commit()
+        except:
+            db.session.rollback()
+            # the print statement below will give us more info on what caused the error
+            print(sys.exc_info())
+            # we're returning the todo_obj back to the user as a json_obj
+        finally:
+            # this should happen regardless
+            db.session.close()
+        return redirect(url_for('index'))
+    else:
+        db.session.close()
+
+
 @app.route('/todos/create', methods=['POST'])
 def create_todo():
     # the body var is what we'll use to send data back to the user
@@ -63,7 +104,7 @@ def create_todo():
         todo = Todos(description=description)
         db.session.add(todo)
         db.session.commit()
-        body['description'] = todo.description
+        body = {'description': todo.description}
     except:
         error = True
         db.session.rollback()
