@@ -4,4 +4,20 @@
 
 ul{
     list-style: none;
+    width: 200px;
+}
+
+li {
+    clear: both;
+    margin: 10px 0;
+}
+
+li button{
+    -webkit-appearance: none;
+    border: none;
+    outline: none;
+    color: red;
+    float: right;
+    cursor: pointer;
+    font-size: 20px;
 }
